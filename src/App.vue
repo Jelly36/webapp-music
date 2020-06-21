@@ -6,11 +6,11 @@
   </div>
 </template>
 <script>
-import  Header from "components/header/Header"
-import Tab from "components/tab/Tab"
+import Header from 'components/header/Header'
+import Tab from 'components/tab/Tab'
 export default {
   name: 'App',
-  components:{
+  components: {
     Header,
     Tab
   }

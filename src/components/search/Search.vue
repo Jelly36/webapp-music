@@ -1,18 +1,15 @@
 <!--  -->
 <template>
-<div></div>
+  <div></div>
 </template>
 
 <style scoped>
-
 </style>
 <script>
 export default {
-    name:"Search",
-data() {
-return {
-
-}
-},
+  name: 'Search',
+  data () {
+    return {}
+  }
 }
 </script>
