@@ -16,6 +16,7 @@
   min-height: 1px;
   position: relative;
   overflow: hidden;
+  background: @color-theme;
   .slider-group {
     position: relative;
     overflow: hidden;
@@ -27,7 +28,8 @@
       text-align: center;
       img {
         display: block;
-        width: 100%;
+        width: 90%;
+        
       }
     }
   }
@@ -61,7 +63,8 @@ export default {
   name: "Slider",
   data () {
     return {
-      currentPageIndex:0
+      currentPageIndex:0,
+      dots: []
     }
   },
   props: {
@@ -91,7 +94,6 @@ export default {
       this.children = this.$refs.sliderGroup.children
       let width = 0
       const sliderWidth = this.$refs.slider.clientWidth
-      console.log(sliderWidth)
       for( let i = 0; i < this.children.length; i++ ){
         const child = this.children[i]
         addClass(child, 'slider-item')
