@@ -47,7 +47,7 @@
             </div>
             <p class="play-count">
               <i class="iconfont icon-bofangsanjiaoxing"></i>
-              {{Math.floor(item.playCount / 10000)||(item.playCount.toFixed(2))}}万
+              {{Math.floor(item.playCount / 10000)}}万
             </p>
             <div class="text">
               <p class="name">{{item.name}}</p>
@@ -88,7 +88,7 @@
     padding-top: 6px;
     display: block;
     text-align: center;
-    font-size: @font-size-small-s;
+    font-size: @font-size-small-x;
     height: 20px;
     line-height: 20px;
   }
@@ -131,11 +131,23 @@
   .item {
     width: 28%;
     margin-bottom: 10px;
+    position: relative;
     img{
       display:block;
       width:100%;
       height: 100%;
     }
+    .play-count{
+      position: absolute;
+      right: 4px;
+      top:2px;
+      font-size: @font-size-small-x;
+      color:#fff;
+      margin:0
+    }
+  }
+  .name{
+    font-size:@font-size-medium
   }
 }
 </style>
