@@ -1,61 +1,63 @@
 <!--  -->
 <template>
   <div class="recommend">
-    <div class="recommend-content">
-      <div v-if="banner.length" class="slider-wrapper">
-        <slider>
-          <div v-for="(item, index) in banner" :key="index">
-            <a href>
-              <img :src="item.pic" alt />
-            </a>
-          </div>
-        </slider>
-      </div>
-      <div class="listBox">
-        <div class="listItem">
-          <div class="redBack">
-            <i class="iconfont icon-tuijian01"></i>
-          </div>
-          <span>每日推荐</span>
-        </div>
-        <div class="listItem">
-          <div class="redBack">
-            <i class="iconfont icon-paihangbang"></i>
-          </div>
-          <span>排行榜</span>
-        </div>
-        <div class="listItem">
-          <div class="redBack">
-            <i class="iconfont icon-tuijian"></i>
-          </div>
-          <span>私人FM</span>
-        </div>
-        <div class="listItem">
-          <div class="redBack">
-            <i class="iconfont icon-gedan"></i>
-          </div>
-          <span>歌单</span>
-        </div>
-      </div>
-      <div class="recommend_list" ref="recommend_list">
-        <h1 class="title">推荐歌单</h1>
-        <ul class="wrapItem">
-          <li class="item" ref="item" v-for="item in songList" :key="item.id">
-            <div class="icon">
-              <div class="gradients"></div>
-              <img :src="item.coverImgUrl" alt />
+    <Scroll ref="scroll">
+      <div class="recommend-content">
+        <div v-if="banner.length" class="slider-wrapper">
+          <slider>
+            <div v-for="(item, index) in banner" :key="index">
+              <a href>
+                <img :src="item.pic" alt @load="imgLoadSuccess" />
+              </a>
             </div>
-            <p class="play-count">
-              <i class="iconfont icon-bofangsanjiaoxing"></i>
-              {{Math.floor(item.playCount / 10000)}}万
-            </p>
-            <div class="text">
-              <p class="name">{{item.name}}</p>
+          </slider>
+        </div>
+        <div class="listBox">
+          <div class="listItem">
+            <div class="redBack">
+              <i class="iconfont icon-tuijian01"></i>
             </div>
-          </li>
-        </ul>
+            <span>每日推荐</span>
+          </div>
+          <div class="listItem">
+            <div class="redBack">
+              <i class="iconfont icon-paihangbang"></i>
+            </div>
+            <span>排行榜</span>
+          </div>
+          <div class="listItem">
+            <div class="redBack">
+              <i class="iconfont icon-tuijian"></i>
+            </div>
+            <span>私人FM</span>
+          </div>
+          <div class="listItem">
+            <div class="redBack">
+              <i class="iconfont icon-gedan"></i>
+            </div>
+            <span>歌单</span>
+          </div>
+        </div>
+        <div class="recommend_list" ref="recommend_list">
+          <h1 class="title">推荐歌单</h1>
+          <ul class="wrapItem">
+            <li class="item" ref="item" v-for="item in songList" :key="item.id">
+              <div class="icon">
+                <div class="gradients"></div>
+                <img :src="item.coverImgUrl" @load="imgLoad" />
+              </div>
+              <p class="play-count">
+                <i class="iconfont icon-bofangsanjiaoxing"></i>
+                {{Math.floor(item.playCount / 10000)}}万
+              </p>
+              <div class="text">
+                <p class="name">{{item.name}}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
+    </Scroll>
   </div>
 </template>
 
@@ -132,28 +134,29 @@
     width: 28%;
     margin-bottom: 10px;
     position: relative;
-    img{
-      display:block;
-      width:100%;
+    img {
+      display: block;
+      width: 100%;
       height: 100%;
     }
-    .play-count{
+    .play-count {
       position: absolute;
       right: 4px;
-      top:2px;
+      top: 2px;
       font-size: @font-size-small-x;
-      color:#fff;
-      margin:0
+      color: #fff;
+      margin: 0;
     }
   }
-  .name{
-    font-size:@font-size-medium
+  .name {
+    font-size: @font-size-medium;
   }
 }
 </style>
 <script>
 import { getBanner, recommendList } from "api/recommend";
 import Slider from "base/slider/Slider";
+import Scroll from "base/scroll/Scroll";
 import { ERR_OK } from "utils/config";
 export default {
   name: "Recommend",
@@ -174,7 +177,8 @@ export default {
     });
   },
   components: {
-    Slider
+    Slider,
+    Scroll
   },
   methods: {
     _getBanner() {
@@ -199,6 +203,20 @@ export default {
     },
     getHeight() {
       this.$refs.item.style.height = this.$refs.item.clientWidth + "px";
+    },
+    imgLoad() {
+      if (!this.checkLoad) {
+        console.log("1---")
+        this.$refs.scroll.refresh();
+        this.checkLoad = true;
+      }
+    },
+    imgLoadSuccess() {
+      console.log("1---")
+      if (!this.checkLoad2) {
+        this.$refs.scroll.refresh();
+        this.checkLoad2 = true;
+      }
     }
   }
 };
