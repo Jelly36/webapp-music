@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div class="recommend">
-    <Scroll ref="scroll">
+    <Scroll ref="scroll" class="scroll">
       <div class="recommend-content">
         <div v-if="banner.length" class="slider-wrapper">
           <slider>
@@ -57,13 +57,15 @@
           </ul>
         </div>
       </div>
+      <div class="loading-container" v-show="!songList.length">
+        <Loading></Loading>
+      </div>
     </Scroll>
   </div>
 </template>
 
 <style scoped lang="less">
 @import "~common/less/variable.less";
-
 .slider-wrapper {
   // position: relative;
   // top: 10px;
@@ -152,12 +154,21 @@
     font-size: @font-size-medium;
   }
 }
+.loading-container{
+  position: absolute;
+  width:100%;
+  top:40%;
+  transform: translateX(50%);
+  margin-left: -12px;
+}
 </style>
 <script>
 import { getBanner, recommendList } from "api/recommend";
 import Slider from "base/slider/Slider";
 import Scroll from "base/scroll/Scroll";
+import Loading from "base/loading/Loading"
 import { ERR_OK } from "utils/config";
+
 export default {
   name: "Recommend",
   data() {
@@ -178,7 +189,8 @@ export default {
   },
   components: {
     Slider,
-    Scroll
+    Scroll,
+    Loading
   },
   methods: {
     _getBanner() {
@@ -191,7 +203,7 @@ export default {
     _getSongMeun() {
       let obj = {
         order: "hot",
-        limit: "15",
+        limit: "9",
         offset: "",
         cat: ""
       };
@@ -206,13 +218,11 @@ export default {
     },
     imgLoad() {
       if (!this.checkLoad) {
-        console.log("1---")
         this.$refs.scroll.refresh();
         this.checkLoad = true;
       }
     },
     imgLoadSuccess() {
-      console.log("1---")
       if (!this.checkLoad2) {
         this.$refs.scroll.refresh();
         this.checkLoad2 = true;

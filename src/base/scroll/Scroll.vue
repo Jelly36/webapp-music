@@ -23,7 +23,7 @@ export default {
     setTimeout(() => {
       this._initScroll()
     })
-    // this.$refs.wrapper.style.height = document.body.clientHeight + "px"
+    
   },
   methods: {
     _initScroll () {
