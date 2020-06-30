@@ -7,14 +7,17 @@ export function getBanner() {
 }
 
 // 推荐歌单
-export function recommendList(params) {
+export function recommendList(data) {
   return request({
-    url: '/top/playlist',
+    url: '/personalized',
     params: {
-      order: params.order,
-      limit: params.limit,
-      offset: params.offset,
-      cat: params.cat
+      limit:data
     }
+  })
+}
+// 推荐新音乐
+export function recommendNewSong() {
+  return request({
+    url: '/personalized/newsong',
   })
 }

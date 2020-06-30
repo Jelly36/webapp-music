@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div class="recommend">
-    <Scroll ref="scroll" class="scroll">
+    <Scroll ref="scroll">
       <div class="recommend-content">
         <div v-if="banner.length" class="slider-wrapper">
           <slider>
@@ -44,7 +44,7 @@
             <li class="item" ref="item" v-for="item in songList" :key="item.id">
               <div class="icon">
                 <div class="gradients"></div>
-                <img :src="item.coverImgUrl" @load="imgLoad" />
+                <img :src="item.picUrl" @load="imgLoad" />
               </div>
               <p class="play-count">
                 <i class="iconfont icon-bofangsanjiaoxing"></i>
@@ -56,8 +56,31 @@
             </li>
           </ul>
         </div>
+        <div class="hot-song">
+          <h1 class="title">推荐新音乐</h1>
+          <div class="song-wrap">
+            <ul class="list">
+              <li class="song-item" v-for="(item, index) in newSong" :key="index">
+                <div class="song-img">
+                  <img :src="item.picUrl" alt="">
+                </div>
+                <div class="song-detail">
+                  <div class="song-name">
+                    <span>{{item.name}}</span>
+                    <span class="singer" v-for="innerItem in item.song.artists" :key="innerItem.id">- {{innerItem.name}}</span>
+                  </div>
+                  <div class="song-produce">{{item.song.album.company}}</div>
+                </div>
+                <div class="play-icon">
+                  <img src="~common/image/play.png" alt="" @load="songImgLoad">
+                </div>
+              </li>
+            </ul>
+            
+          </div>
+        </div>
       </div>
-      <div class="loading-container" v-show="!songList.length">
+      <div class="loading-container" v-show="(!songList.length) && (!newSong.length)">
         <Loading></Loading>
       </div>
     </Scroll>
@@ -116,7 +139,8 @@
 }
 .recommend_list {
   background-color: #fff;
-  .title {
+}
+.title {
     height: 60px;
     line-height: 60px;
     font-size: @font-size-medium-x;
@@ -125,6 +149,8 @@
     font-weight: bold;
     margin: 0;
   }
+.recommend-content{
+  padding-bottom: 88px;
 }
 .wrapItem {
   margin: 0;
@@ -152,6 +178,11 @@
   }
   .name {
     font-size: @font-size-medium;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 }
 .loading-container{
@@ -161,9 +192,71 @@
   transform: translateX(50%);
   margin-left: -12px;
 }
+.song-wrap{
+  overflow: hidden;
+}
+ul{
+  padding:0;
+}
+
+.song-item{
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 4px;
+  .song-img{
+    flex:1;
+    height: 64px;
+    width:64px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    img{
+      display:block;
+      width:60px;
+      height: 60px;
+      border-radius: 4px;
+    }
+  }
+  .song-item:last-child{
+    margin-bottom: none;
+  }
+  .song-detail{
+    flex:3;
+    display:flex;
+    flex-direction: column;
+    .song-name{
+      flex:1;
+      line-height: 32px;
+      overflow: hidden;
+      .singer{
+        color:@color-text-g;
+        font-size:@font-size-medium
+      }
+    }
+    .song-produce{
+      flex:1;
+      line-height:32px;
+      color:@color-text-g;
+      font-size:@font-size-medium;
+      overflow: hidden;
+    }
+  }
+  .play-icon{
+    flex:1;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    img{
+      display: block;
+      height: 30px;
+      width:30px;
+
+    }
+  }
+}
 </style>
 <script>
-import { getBanner, recommendList } from "api/recommend";
+import { getBanner, recommendList, recommendNewSong} from "api/recommend";
 import Slider from "base/slider/Slider";
 import Scroll from "base/scroll/Scroll";
 import Loading from "base/loading/Loading"
@@ -174,13 +267,15 @@ export default {
   data() {
     return {
       banner: [],
-      songList: []
+      songList: [],
+      newSong: []
     };
   },
   computed: {},
   created() {
     this._getBanner();
     this._getSongMeun();
+    this._getNewSong()
   },
   mounted() {
     this.$nextTick(() => {
@@ -201,17 +296,20 @@ export default {
       });
     },
     _getSongMeun() {
-      let obj = {
-        order: "hot",
-        limit: "9",
-        offset: "",
-        cat: ""
-      };
-      recommendList(obj).then(res => {
+      recommendList(9).then(res => {
+                console.log(res)
         if (res.status === ERR_OK) {
-          this.songList = res.data.playlists;
+          this.songList = res.data.result;
         }
       });
+    },
+    _getNewSong() {
+      recommendNewSong().then(res => {
+        if (res.data.code === ERR_OK) {
+          this.newSong = res.data.result
+        }
+        console.log(res)
+      })
     },
     getHeight() {
       this.$refs.item.style.height = this.$refs.item.clientWidth + "px";
@@ -226,6 +324,12 @@ export default {
       if (!this.checkLoad2) {
         this.$refs.scroll.refresh();
         this.checkLoad2 = true;
+      }
+    },
+    songImgLoad() {
+      if (!this.checkLoad3) {
+        this.$refs.scroll.refresh();
+        this.checkLoad3 = true;
       }
     }
   }

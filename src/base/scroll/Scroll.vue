@@ -62,7 +62,7 @@ export default {
     position: relative;
     left:0;
     top: 0;
-    overflow: hidden;
     height: 100vh;
+    overflow: hidden;
   }
 </style>
