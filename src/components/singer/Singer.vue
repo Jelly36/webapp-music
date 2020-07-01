@@ -1,7 +1,6 @@
 <!--  -->
 <template>
   <div class="singer">
-    <Scroll ref="scroll">
       <div class="classify">
         <ul class="singer-classfiy1">
           <li class="active first">全部</li>
@@ -22,7 +21,7 @@
         <i class="iconfont icon-xiala" @click="showList = true" v-show="!showList"></i>
         <i class="iconfont icon-shangla" @click="showList = !showList" v-show="showList"></i>
       </div>
-    </Scroll>
+      <Listview :data='singers'></Listview>
   </div>
 </template>
 
@@ -34,6 +33,7 @@ ul {
 .singer-classfiy1,
 .singer-classfiy2 {
   display: block;
+  margin-bottom: 0px;
   height: 20px;
   li {
     float: left;
@@ -60,32 +60,32 @@ ul {
 import Scroll from "base/scroll/Scroll";
 import { getSingers } from "api/singer";
 import { ERR_OK } from "utils/config";
-import Singer from "utils/singer"
+import Singer from "utils/singer";
+import Listview from 'base/listview/Listview'
 
-const HOT_NAME = '热门'
-const HOT_SINGER_LEN = 10
-const pinyin = require('pinyin')
+const HOT_NAME = "热门";
+const HOT_SINGER_LEN = 10;
+const pinyin = require("pinyin");
 export default {
   name: "Recommend",
   data() {
     return {
       showList: false,
-      singerType:"-1",
-      area:"-1",
-      rand:"",
-      singer: []
+      singerType: "-1",
+      area: "-1",
+      rand: "",
+      singers: []
     };
   },
   components: {
-    Scroll
+    Scroll,
+    Listview
   },
   created() {
     this._getSingerList();
   },
   mounted() {
-    console.log(pinyin("薛之谦", {
-      style: pinyin.STYLE_FIRST_LETTER
-    }))
+
   },
   methods: {
     _getSingerList() {
@@ -94,18 +94,17 @@ export default {
         area: this.area,
         initial: this.rand
       };
-      getSingers( data ).then(res => {
+      getSingers(data).then(res => {
         console.log(res);
-        if(res.status === ERR_OK) {
-          let singer = res.data.artists
-          singer.map((item) => {
-            let py = pinyin(item.name, {
+        if (res.status === ERR_OK) {
+          let singer = res.data.artists;
+          singer.map(item => {
+            let py = pinyin(item.name[0], {
               style: pinyin.STYLE_FIRST_LETTER
-            })
-            item.initial = py[0][0].toUpperCase()
-          })
-          this.singers = this._normalizeSingers(s)
-          // this.singer = res.data.artists
+            });
+            item.initial = py[0][0].toUpperCase();
+          });
+          this.singers = this._normalizeSingers(singer);
         }
       });
     },
@@ -113,16 +112,51 @@ export default {
       let map = {
         hot: {
           title: HOT_NAME,
-          item: []
+          items: []
+        }
+      };
+      list.forEach((item, index) => {
+        if (index < HOT_SINGER_LEN) {
+          // 往热门字段添加数据
+          map.hot.items.push(
+            new Singer({
+              id: item.id,
+              name: item.name,
+              img1v1Url: item.img1v1Url
+            })
+          );
+        }
+
+        const key = item.initial;
+        if (!map[key]) {
+          map[key] = {
+            title: key,
+            items: []
+          };
+        }
+        // 往字母数据添加数据
+        map[key].items.push(new Singer({
+          id: item.id,
+          name: item.name,
+          img1v1Url: item.img1v1Url
+        }))
+      });
+
+      let hot = []
+      let ret = []
+      for(const key in map) {  //拿下标
+        let val = map[key]
+        if(val.title.match(/[A-Z]/)) {
+          ret.push(val)
+        } else if(val.title == HOT_NAME) {
+          hot.push(val)
         }
       }
-    //   list.forEach((item, index) => {
-    //     if(index < HOT_SINGER_LEN) {
-    //       map.hot.item.push(new Singer({
-    //         id:item.
-    //       }))
-    //     }
-    //   })
+
+      ret.sort((a,b) => {
+        return a.title.charCodeAt(0) - b.title.charCodeAt(0)
+      })
+      return hot.concat(ret)
     }
   }
 };

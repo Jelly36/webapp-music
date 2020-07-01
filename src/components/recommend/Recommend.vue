@@ -2,7 +2,8 @@
 <template>
   <div class="recommend">
     <Scroll ref="scroll">
-      <div class="recommend-content">
+      <div>
+        <div class="recommend-content">
         <div v-if="banner.length" class="slider-wrapper">
           <slider>
             <div v-for="(item, index) in banner" :key="index">
@@ -82,6 +83,7 @@
       </div>
       <div class="loading-container" v-show="(!songList.length) && (!newSong.length)">
         <Loading></Loading>
+      </div>
       </div>
     </Scroll>
   </div>
