@@ -5,6 +5,12 @@ import router from './router'
 
 import fastclick from 'fastclick'
 import 'common/iconfont/iconfont.css'
+import VueLazyLoad from 'vue-lazyload'
+
+Vue.use(VueLazyLoad,{
+  loading: require("common/image/default.jpg"),
+  error: require("common/image/default.jpg")
+})
 fastclick.attach(document.body)
 
 new Vue({

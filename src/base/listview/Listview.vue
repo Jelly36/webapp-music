@@ -1,20 +1,27 @@
 <!--  -->
 <template>
-  <Scroll class="listview" ref="scroll" :data="data">
-    <ul>
-      <li class="list-group" v-for="(group, index) in data" :key="index">
+  <Scroll 
+    class="listview"
+    ref="scroll" 
+    :data="data"
+    :listenScroll="listenScroll"
+    :probeType="probeType"
+    @scroll="scroll"
+  >
+    <ul class="box">
+      <li class="list-group" v-for="(group, index) in data" :key="index" ref="listGroup">
           <h2 class="list-group-title">{{group.title}}</h2>
           <ul>
             <li class="list-group-item" v-for="(item, index) in group.items" :key="index">
-              <img :src="item.avatar" alt="" class="avatar" @load="imgLoadSuccess">
+              <img v-lazy="item.avatar" alt="" class="avatar" @load="imgLoadSuccess">
               <span class="name">{{item.name}}</span>
             </li>
           </ul>
       </li>
     </ul>
-    <div class="list-shortcut">
+    <div class="list-shortcut" @touchstart="onShortcutStart" @touchmove.stop.prevent="onShortcutMove">
       <ul>
-        <li class="item"></li>
+        <li class="item" v-for="(item, index) in shortcutList" :key="index" :data-index="index" :class="{'current':index==currentIndex}">{{item}}</li>
       </ul>
     </div>
   </Scroll>
@@ -22,6 +29,9 @@
 
 <style scoped lang="less">
 @import '~common/less/variable.less';
+.box{
+  padding-bottom: 150px;
+}
 .listview{
   position: relative;
   overflow: hidden;
@@ -64,10 +74,9 @@
     position: absolute;
     z-index: 30;
     right: 3px;
-    top: 50%;
+    top: 40%;
     transform: translateY(-50%);
     width: 20px;
-    padding: 200px 0;
     border-radius: 3px;
     text-align: center;
     font-family:Helvetica;
@@ -111,7 +120,12 @@ const ANCHOR_HEIGHT = 20
 
 export default {
   data() {
-    return {};
+    return {
+      currentIndex: 0,
+      scrollY: -1,
+      listenHeight: "",
+      probeType: 3
+    };
   },
   props: {
     data: {
@@ -119,16 +133,82 @@ export default {
       default: []
     }
   },
+  created() {
+    this.touch = {}
+    this.listenScroll = true
+  },
   components: {
     Scroll
   },
+  computed: { 
+    shortcutList() {
+      return this.data.map(item => {
+        return item.title.substr(0,1)
+      })
+    }
+  },
   mounted() {
-    console.log(this.data)
   },
   methods: {
     imgLoadSuccess() {
-
       this.$refs.scroll.refresh()
+    },
+    scroll(position) {
+      this.scrollY = position.y
+    },
+    onShortcutStart(e) {
+      let anchorIndex = getData(e.target, 'index')
+      let firstTouch = e.touches[0]
+      this.touch.y1 = firstTouch.pageY
+      this.currentIndex = anchorIndex
+      this.touch.anchorIndex = anchorIndex
+      this._scrollTo(anchorIndex)
+    },
+    onShortcutMove(e) {
+      // 第一次触摸的位置
+      let firstTouch = e.touches[0]
+      this.touch.y2 = firstTouch.pageY
+      let delta = (this.touch.y2 -  this.touch.y1) / ANCHOR_HEIGHT | 0
+      let anchorIndex = parseInt(this.touch.anchorIndex) + delta
+      this._scrollTo(anchorIndex)
+    },
+    _scrollTo(index) {
+      this.$refs.scroll.scrollToElement(this.$refs.listGroup[index],0)
+    },
+    _calculateHeight() {
+      console.log("计算完成")
+      // 计算每个listgroup的高度
+      this.listenHeight = []
+      const list = this.$refs.listGroup
+      let height = 0
+      this.listenHeight.push(height)
+      for(let i = 0; i < list.length; i++) {
+        let item = list[i]
+        height += item.clientHeight
+        this.listenHeight.push(height)
+      }
+    }
+  },
+  watch: {
+    data() {
+      setTimeout(() => {
+        this._calculateHeight()
+      }, 20)
+    },
+    scrollY(newY) {
+      // 当scrollY被更新时
+      let item = this.listenHeight
+      console.log(item)
+      for (let i = 0; i < item.length; i++) {
+        let height1 = item[i]
+        let height2 = item[i+1]
+        if(!height2 || (-newY > height1 && -newY < height2)) {
+          this.currentIndex = i
+          console.log(this.currentIndex)
+          return
+        }
+        this.currentIndex = 0
+      }
     }
   }
 };

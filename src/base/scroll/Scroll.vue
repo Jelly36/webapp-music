@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import BScroll from 'better-scroll'
+import BScroll from "better-scroll";
 export default {
   name: "Scroll",
   props: {
@@ -17,52 +17,65 @@ export default {
       type: Boolean,
       default: true
     },
-    
+    listenScroll: {
+      type: Boolean,
+      default: false
+    }
   },
-  mounted () {
+  mounted() {
     setTimeout(() => {
-      this._initScroll()
-    })
-    
+      this._initScroll();
+    });
   },
   methods: {
-    _initScroll () {
+    _initScroll() {
       if (!this.$refs.wrapper) {
-        return
+        return;
       }
       this.scroll = new BScroll(this.$refs.wrapper, {
         probeType: this.probeType,
         click: this.click
-      })
+      });
+      if (this.listenScroll) {
+        this.scroll &&
+          this.scroll.on("scroll", position => {
+            this.$emit("scroll", position);
+          });
+      }
+    },
 
-      
+    enable() {
+      this.scroll && this.scroll.enable();
     },
-    enable () {
-      this.scroll && this.scroll.enable()
+    disable() {
+      this.scroll && this.scroll.disable();
     },
-    disable () {
-      this.scroll && this.scroll.disable()
+    refresh() {
+      this.scroll && this.scroll.refresh();
     },
-    refresh () {
-      this.scroll && this.scroll.refresh()
+    scrollTo() {
+      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments);
+    },
+    scrollToElement() {
+      this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments);
     }
   },
   watch: {
-    data () {
+    data() {
       setTimeout(() => {
-        this.refresh()
-      }, this.refreshDelay)
+        this.refresh();
+      }, this.refreshDelay);
     }
   }
-}
+};
 </script>
 
 <style>
-  .wrapper{
-    position: relative;
-    left:0;
-    top: 0;
-    height: 100vh;
-    overflow: hidden;
-  }
+.wrapper {
+  position: relative;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
 </style>

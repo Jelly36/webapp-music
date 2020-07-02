@@ -18,10 +18,10 @@
         </ul>
       </div>
       <div class="isShow">
-        <i class="iconfont icon-xiala" @click="showList = true" v-show="!showList"></i>
+        <i class="iconfont icon-xiala" @click="showSingerClassify" v-show="!showList"></i>
         <i class="iconfont icon-shangla" @click="showList = !showList" v-show="showList"></i>
       </div>
-      <Listview :data='singers'></Listview>
+      <Listview :data='singers' class="listview"></Listview>
   </div>
 </template>
 
@@ -30,15 +30,23 @@
 ul {
   padding: 0;
 }
+.classify,.isShow{
+  background-color: @color-background;
+}
 .singer-classfiy1,
 .singer-classfiy2 {
+  font-size:@font-size-medium;
+  padding-top:10px;
   display: block;
-  margin-bottom: 0px;
+  margin: 0px;
   height: 20px;
   li {
     float: left;
     margin-left: 20px;
   }
+}
+.listview{
+  clear:both;
 }
 .isShow {
   text-align: center;
@@ -67,7 +75,7 @@ const HOT_NAME = "热门";
 const HOT_SINGER_LEN = 10;
 const pinyin = require("pinyin");
 export default {
-  name: "Recommend",
+  name: "Singer",
   data() {
     return {
       showList: false,
@@ -157,6 +165,9 @@ export default {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })
       return hot.concat(ret)
+    },
+    showSingerClassify() {
+      this.showList = true
     }
   }
 };

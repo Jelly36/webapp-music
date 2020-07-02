@@ -1,4 +1,7 @@
 @import "./normalize.css";
+*{
+  touch-action: pan-y;
+}
 ul{
   list-style:none;
   padding: 0;
