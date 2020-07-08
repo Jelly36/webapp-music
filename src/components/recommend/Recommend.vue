@@ -229,6 +229,8 @@ ul{
     .song-name{
       flex:1;
       line-height: 32px;
+      display:block;
+      align-items: center;
       overflow: hidden;
       .singer{
         color:@color-text-g;
@@ -237,7 +239,8 @@ ul{
     }
     .song-produce{
       flex:1;
-      line-height:32px;
+      display:block;
+      align-items: center;
       color:@color-text-g;
       font-size:@font-size-medium;
       overflow: hidden;
@@ -280,9 +283,6 @@ export default {
     this._getNewSong()
   },
   mounted() {
-    this.$nextTick(() => {
-      this.getHeight();
-    });
   },
   components: {
     Slider,
@@ -299,7 +299,6 @@ export default {
     },
     _getSongMeun() {
       recommendList(9).then(res => {
-                console.log(res)
         if (res.status === ERR_OK) {
           this.songList = res.data.result;
         }
@@ -310,11 +309,7 @@ export default {
         if (res.data.code === ERR_OK) {
           this.newSong = res.data.result
         }
-        console.log(res)
       })
-    },
-    getHeight() {
-      this.$refs.item.style.height = this.$refs.item.clientWidth + "px";
     },
     imgLoad() {
       if (!this.checkLoad) {

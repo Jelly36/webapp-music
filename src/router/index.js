@@ -4,7 +4,6 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
   routes: [
     {
       path: '/',
@@ -23,7 +22,13 @@ export default new Router({
     {
       name: 'Singer',
       path: '/Singer',
-      component: () => import('components/singer/Singer')
+      component: () => import('components/singer/Singer'),
+      children:[
+        {
+        path:"/:id",
+        component: () => import('components/singer-detail/SingerDetail')
+      }
+      ]
     },
     {
       name: 'Search',
@@ -32,3 +37,8 @@ export default new Router({
     }
   ]
 })
+
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+    return originalPush.call(this, location).catch(err => err)
+}

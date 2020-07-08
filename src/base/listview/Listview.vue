@@ -4,15 +4,15 @@
     class="listview"
     ref="scroll" 
     :data="data"
-    :listenScroll="listenScroll"
     :probeType="probeType"
+    :listenScroll='listenScroll'
     @scroll="scroll"
   >
     <ul class="box">
       <li class="list-group" v-for="(group, index) in data" :key="index" ref="listGroup">
           <h2 class="list-group-title">{{group.title}}</h2>
           <ul>
-            <li class="list-group-item" v-for="(item, index) in group.items" :key="index">
+            <li class="list-group-item" v-for="(item, index) in group.items" :key="index" @click="selectItem(item)">
               <img v-lazy="item.avatar" alt="" class="avatar" @load="imgLoadSuccess">
               <span class="name">{{item.name}}</span>
             </li>
@@ -21,7 +21,7 @@
     </ul>
     <div class="list-shortcut" @touchstart="onShortcutStart" @touchmove.stop.prevent="onShortcutMove">
       <ul>
-        <li class="item" v-for="(item, index) in shortcutList" :key="index" :data-index="index" :class="{'current':index==currentIndex}">{{item}}</li>
+        <li class="item" v-for="(item,index) in getLetters" :key="index" :data-index="index" :class="{'current':index==currentIndex}">{{item}}</li>
       </ul>
     </div>
   </Scroll>
@@ -30,7 +30,7 @@
 <style scoped lang="less">
 @import '~common/less/variable.less';
 .box{
-  padding-bottom: 150px;
+  padding-bottom: 70px;
 }
 .listview{
   position: relative;
@@ -141,70 +141,69 @@ export default {
     Scroll
   },
   computed: { 
-    shortcutList() {
-      return this.data.map(item => {
-        return item.title.substr(0,1)
+    getLetters() {
+      return this.data.map(group => {
+        return group.title.substr(0,1)
       })
     }
   },
   mounted() {
   },
   methods: {
+    selectItem(item) {
+      this.$emit('select',item)
+    },
     imgLoadSuccess() {
       this.$refs.scroll.refresh()
+    },
+    onShortcutStart(e) {
+      let anchorIndex = getData(e.target,'index')
+      this.currentIndex = anchorIndex
+      let firstTouch = e.touches[0]
+      this.touch.pageY1 = firstTouch.pageY
+      this.touch.anchorIndex = anchorIndex
+       this._scroll(anchorIndex)
+    },
+    onShortcutMove(e) {
+      let firstTouch = e.touches[0]
+      this.touch.pageY2 = firstTouch.pageY
+      let delta = (this.touch.pageY2 - this.touch.pageY1) / ANCHOR_HEIGHT | 0
+      let anchorIndex = parseInt(this.touch.anchorIndex) + delta
+      this.currentIndex = anchorIndex
+      this._scroll(anchorIndex)
+    },
+    _scroll(index) {
+      this.$refs.scroll.scrollToElement(this.$refs.listGroup[index])
     },
     scroll(position) {
       this.scrollY = position.y
     },
-    onShortcutStart(e) {
-      let anchorIndex = getData(e.target, 'index')
-      let firstTouch = e.touches[0]
-      this.touch.y1 = firstTouch.pageY
-      this.currentIndex = anchorIndex
-      this.touch.anchorIndex = anchorIndex
-      this._scrollTo(anchorIndex)
-    },
-    onShortcutMove(e) {
-      // 第一次触摸的位置
-      let firstTouch = e.touches[0]
-      this.touch.y2 = firstTouch.pageY
-      let delta = (this.touch.y2 -  this.touch.y1) / ANCHOR_HEIGHT | 0
-      let anchorIndex = parseInt(this.touch.anchorIndex) + delta
-      this._scrollTo(anchorIndex)
-    },
-    _scrollTo(index) {
-      this.$refs.scroll.scrollToElement(this.$refs.listGroup[index],0)
-    },
     _calculateHeight() {
-      console.log("计算完成")
-      // 计算每个listgroup的高度
       this.listenHeight = []
-      const list = this.$refs.listGroup
-      let height = 0
+      let item = this.$refs.listGroup
+      let height = 0;
       this.listenHeight.push(height)
-      for(let i = 0; i < list.length; i++) {
-        let item = list[i]
-        height += item.clientHeight
+      for (let i =0;i < item.length; i++) {
+        height += item[i].clientHeight
         this.listenHeight.push(height)
       }
+      
     }
+    
   },
   watch: {
     data() {
       setTimeout(() => {
         this._calculateHeight()
-      }, 20)
+      },20)
     },
     scrollY(newY) {
-      // 当scrollY被更新时
       let item = this.listenHeight
-      console.log(item)
-      for (let i = 0; i < item.length; i++) {
+      for (let i = 0; i < item.length - 1; i++) {
         let height1 = item[i]
         let height2 = item[i+1]
         if(!height2 || (-newY > height1 && -newY < height2)) {
           this.currentIndex = i
-          console.log(this.currentIndex)
           return
         }
         this.currentIndex = 0

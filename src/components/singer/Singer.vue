@@ -1,28 +1,13 @@
 <!--  -->
 <template>
   <div class="singer">
-      <div class="classify">
-        <ul class="singer-classfiy1">
-          <li class="active first">全部</li>
-          <li>华语</li>
-          <li>欧美</li>
-          <li>日本</li>
-          <li>韩国</li>
-          <li>其他</li>
-        </ul>
-        <ul class="singer-classfiy2" v-show="showList">
-          <li class="active first">全部</li>
-          <li>男歌手</li>
-          <li>女歌手</li>
-          <li>乐队</li>
-        </ul>
-      </div>
-      <div class="isShow">
-        <i class="iconfont icon-xiala" @click="showSingerClassify" v-show="!showList"></i>
-        <i class="iconfont icon-shangla" @click="showList = !showList" v-show="showList"></i>
-      </div>
-      <Listview :data='singers' class="listview"></Listview>
+    <Listview :data="singers" class="listview" @select="selectItem"></Listview>
+    <div class="loading-container" v-show="(!singers.length)">
+    <Loading></Loading>
+    <router-view></router-view>
   </div>
+  </div>
+  
 </template>
 
 <style scoped lang="less">
@@ -30,13 +15,14 @@
 ul {
   padding: 0;
 }
-.classify,.isShow{
+.classify,
+.isShow {
   background-color: @color-background;
 }
 .singer-classfiy1,
 .singer-classfiy2 {
-  font-size:@font-size-medium;
-  padding-top:10px;
+  font-size: @font-size-medium;
+  padding-top: 10px;
   display: block;
   margin: 0px;
   height: 20px;
@@ -45,8 +31,8 @@ ul {
     margin-left: 20px;
   }
 }
-.listview{
-  clear:both;
+.listview {
+  clear: both;
 }
 .isShow {
   text-align: center;
@@ -69,16 +55,16 @@ import Scroll from "base/scroll/Scroll";
 import { getSingers } from "api/singer";
 import { ERR_OK } from "utils/config";
 import Singer from "utils/singer";
-import Listview from 'base/listview/Listview'
+import Loading from "base/loading/Loading";
+import Listview from "base/listview/Listview";
 
 const HOT_NAME = "热门";
 const HOT_SINGER_LEN = 10;
 const pinyin = require("pinyin");
 export default {
-  name: "Singer",
+  name: "net-Singer",
   data() {
     return {
-      showList: false,
       singerType: "-1",
       area: "-1",
       rand: "",
@@ -87,15 +73,20 @@ export default {
   },
   components: {
     Scroll,
-    Listview
+    Listview,
+    Loading
   },
   created() {
     this._getSingerList();
   },
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
+    selectItem(item) {
+      this.$router.push({
+        path: `/Singer/${item.id}`
+      })
+      console.log(item.id)
+    },
     _getSingerList() {
       let data = {
         type: this.singerType,
@@ -143,31 +134,34 @@ export default {
           };
         }
         // 往字母数据添加数据
-        map[key].items.push(new Singer({
-          id: item.id,
-          name: item.name,
-          img1v1Url: item.img1v1Url
-        }))
+        map[key].items.push(
+          new Singer({
+            id: item.id,
+            name: item.name,
+            img1v1Url: item.img1v1Url
+          })
+        );
       });
 
-      let hot = []
-      let ret = []
-      for(const key in map) {  //拿下标
-        let val = map[key]
-        if(val.title.match(/[A-Z]/)) {
-          ret.push(val)
-        } else if(val.title == HOT_NAME) {
-          hot.push(val)
+      let hot = [];
+      let ret = [];
+      for (const key in map) {
+        //拿下标
+        let val = map[key];
+        if (val.title.match(/[A-Z]/)) {
+          ret.push(val);
+        } else if (val.title == HOT_NAME) {
+          hot.push(val);
         }
       }
 
-      ret.sort((a,b) => {
-        return a.title.charCodeAt(0) - b.title.charCodeAt(0)
-      })
-      return hot.concat(ret)
+      ret.sort((a, b) => {
+        return a.title.charCodeAt(0) - b.title.charCodeAt(0);
+      });
+      return hot.concat(ret);
     },
     showSingerClassify() {
-      this.showList = true
+      this.showList = true;
     }
   }
 };

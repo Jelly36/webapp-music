@@ -5,8 +5,8 @@ export function getSingers(data) {
   return request({
     url: '/artist/list',
     params: {
-      type: data.type?data.type:'-1',
-      area: data.area?data.area:'-1',
+      type: data.type,
+      area: data.area,
       initial: data.initial
     }
   })
