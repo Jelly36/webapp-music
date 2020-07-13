@@ -2,16 +2,21 @@
 <template>
   <div class="singer">
     <Listview :data="singers" class="listview" @select="selectItem"></Listview>
-    <div class="loading-container" v-show="(!singers.length)">
-    <Loading></Loading>
-    <router-view></router-view>
-  </div>
+    <transition name="slide-fade">
+      <router-view></router-view>
+    </transition>
   </div>
   
 </template>
 
 <style scoped lang="less">
 @import "~common/less/variable.less";
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-enter{
+  transform: translateX(-100%);
+}
 ul {
   padding: 0;
 }
@@ -85,7 +90,6 @@ export default {
       this.$router.push({
         path: `/Singer/${item.id}`
       })
-      console.log(item.id)
     },
     _getSingerList() {
       let data = {
