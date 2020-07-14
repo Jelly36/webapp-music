@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "579810",
+      "name": "分享",
+      "font_class": "fenxiang",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "7335624",
+      "name": "返回",
+      "font_class": "fanhui",
+      "unicode": "eb44",
+      "unicode_decimal": 60228
+    },
+    {
       "icon_id": "672036",
       "name": "下拉",
       "font_class": "xiala",

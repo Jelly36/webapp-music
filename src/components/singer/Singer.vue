@@ -1,17 +1,22 @@
 <!--  -->
 <template>
   <div class="singer">
-    <Listview :data="singers" class="listview" @select="selectItem"></Listview>
-    <div class="loading-container" v-show="(!singers.length)">
-    <Loading></Loading>
-    <router-view></router-view>
+    <Listview  class="listview" @select="selectItem" :data="singers"></Listview>
+    <transition name="slide-fade">
+      <router-view></router-view> 
+     </transition>
   </div>
-  </div>
-  
 </template>
 
 <style scoped lang="less">
 @import "~common/less/variable.less";
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-enter{
+  transform: translateX(100%);
+}
+
 ul {
   padding: 0;
 }
@@ -55,8 +60,8 @@ import Scroll from "base/scroll/Scroll";
 import { getSingers } from "api/singer";
 import { ERR_OK } from "utils/config";
 import Singer from "utils/singer";
-import Loading from "base/loading/Loading";
 import Listview from "base/listview/Listview";
+import { mapMutations } from 'vuex'
 
 const HOT_NAME = "热门";
 const HOT_SINGER_LEN = 10;
@@ -73,8 +78,8 @@ export default {
   },
   components: {
     Scroll,
-    Listview,
-    Loading
+    Listview
+    // Loading
   },
   created() {
     this._getSingerList();
@@ -85,7 +90,7 @@ export default {
       this.$router.push({
         path: `/Singer/${item.id}`
       })
-      console.log(item.id)
+      this.set_singer(item)
     },
     _getSingerList() {
       let data = {
@@ -94,7 +99,6 @@ export default {
         initial: this.rand
       };
       getSingers(data).then(res => {
-        console.log(res);
         if (res.status === ERR_OK) {
           let singer = res.data.artists;
           singer.map(item => {
@@ -162,7 +166,10 @@ export default {
     },
     showSingerClassify() {
       this.showList = true;
-    }
+    },
+    ...mapMutations({
+      set_singer: 'SET_SINGER'
+    })
   }
 };
 </script>

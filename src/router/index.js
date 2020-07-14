@@ -20,15 +20,12 @@ export default new Router({
       component: () => import('components/rank/Rank')
     },
     {
-      name: 'Singer',
       path: '/Singer',
       component: () => import('components/singer/Singer'),
-      children:[
-        {
-        path:"/:id",
-        component: () => import('components/singer-detail/SingerDetail')
-      }
-      ]
+    },
+    {
+      path:"/Singer/:id",
+      component: () => import('components/singer-detail/SingerDetail')
     },
     {
       name: 'Search',

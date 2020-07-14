@@ -1,0 +1,1 @@
+export const SET_SIGNER = "SET_SINGER"

@@ -3,7 +3,6 @@
   <Scroll 
     class="listview"
     ref="scroll" 
-    :data="data"
     :probeType="probeType"
     :listenScroll='listenScroll'
     @scroll="scroll"
@@ -130,7 +129,7 @@ export default {
   props: {
     data: {
       type: Array,
-      default: []
+      default: () => []
     }
   },
   created() {

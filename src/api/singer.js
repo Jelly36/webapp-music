@@ -11,3 +11,10 @@ export function getSingers(data) {
     }
   })
 }
+
+// 请求歌手详情数据
+export function getSingerDetail(singerId) {
+  return request({
+    url: '/artists?id='+ singerId,
+  })
+}
