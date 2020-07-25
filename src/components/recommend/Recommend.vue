@@ -77,7 +77,7 @@
                 </div>
               </li>
             </ul>
-            
+
           </div>
         </div>
       </div>
@@ -294,6 +294,7 @@ export default {
       getBanner().then(res => {
         if (res.status === ERR_OK) {
           this.banner = res.data.banners.slice(3);
+          this.$nextTick();
         }
       });
     },

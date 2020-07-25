@@ -32,131 +32,131 @@
 </template>
 
 <script>
-import Scroll from "base/scroll/Scroll";
-import SongList from "base/song-list/SongList";
-export default {
-  data() {
-    return {
-      scrollY: 0
-    };
-  },
-  props: {
-    bgImage: {
-      type: String,
-      default: ""
+  import Scroll from "base/scroll/Scroll";
+  import SongList from "base/song-list/SongList";
+  export default {
+    data() {
+      return {
+        scrollY: 0
+      };
     },
-    songs: {
-      type: Array,
-      default: []
+    props: {
+      bgImage: {
+        type: String,
+        default: ""
+      },
+      songs: {
+        type: Array,
+        default: []
+      },
+      title: {
+        type: String,
+        default: ""
+      }
     },
-    title: {
-      type: String,
-      default: ""
-    }
-  },
-  components: {
-    Scroll,
-    SongList
-  },
+    components: {
+      Scroll,
+      SongList
+    },
 
-  computed: {
-    bgStyle() {
-      return `background:url(${this.bgImage}) no-repeat center top;background-size:cover`;
-    }
-  },
-  mounted() {
-    let height = this.$refs.bgImage.clientHeight;
-
-    let newHeight = this.$refs.list.$el.clientHeight - height;
-    this.$refs.song_list.style.top = height + 'px';
-    // this.$refs.song_list.style.height = this.$refs.song_list.$el.clientHeight + height +'px';
-  },
-  methods: {
-    returnBack() {
-      this.$router.go(-1);
+    computed: {
+      bgStyle() {
+        return `background:url(${this.bgImage}) no-repeat center top;background-size:cover`;
+      }
     },
-    scroll(position) {
-      this.scrollY = position.y;
-    }
-  },
-  created() {
-    this.probeType = 3;
-    this.listenScroll = true;
-  },
-  watch: {}
-};
+    mounted() {
+      let height = this.$refs.bgImage.clientHeight;
+
+      let newHeight = this.$refs.list.$el.clientHeight - height;
+      this.$refs.song_list.style.top = height + 'px';
+      // this.$refs.song_list.style.height = this.$refs.song_list.$el.clientHeight + height +'px';
+    },
+    methods: {
+      returnBack() {
+        this.$router.go(-1);
+      },
+      scroll(position) {
+        this.scrollY = position.y;
+      }
+    },
+    created() {
+      this.probeType = 3;
+      this.listenScroll = true;
+    },
+    watch: {}
+  };
 </script>
 <style lang='less' scoped>
-@import "~common/less/variable";
+  @import "~common/less/variable";
 
-.music-list {
-  position: fixed;
-  z-index: 100;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: @color-background;
-  .header {
-    position: absolute;
-    height: 44px;
+  .music-list {
+    position: fixed;
+    z-index: 100;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 999;
-    .back {
+    bottom: 0;
+    background-color: @color-background;
+    .header {
       position: absolute;
+      height: 44px;
       top: 0;
-      left: 3px;
-      width: 100%;
-      .iconfont {
-        font-size: 30px;
-        color: #fff;
-        line-height: 44px;
-      }
-      .left-act {
-        float: left;
-      }
-      .right-act {
-        float: right;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      .back {
+        position: absolute;
+        top: 0;
+        left: 3px;
+        width: 100%;
         .iconfont {
-          margin-right: 20px;
+          font-size: 30px;
+          color: #fff;
+          line-height: 44px;
+        }
+        .left-act {
+          float: left;
+        }
+        .right-act {
+          float: right;
+          .iconfont {
+            margin-right: 20px;
+          }
         }
       }
     }
+    .bg-layer {
+      position: relative;
+      height: 100%;
+      background-color: @color-background;
+    }
+    .list {
+      overflow: hidden;
+    }
+    .singerImg {
+      position: absolute;
+      width: 100%;
+      height: 0;
+      padding-top: 62%;
+      background-position: center top;
+      background-size: cover;
+      z-index: -99;
+    }
   }
-  .bg-layer {
-    position: relative;
-    height: 100%;
-    background-color: @color-background;
-  }
-  .list {
-    overflow: hidden;
-  }
-  .singerImg {
+  .singer-name {
     position: absolute;
-    width: 100%;
-    height: 0;
-    padding-top: 62%;
-    background-position: center top;
-    background-size: cover;
-    z-index: -99;
+    bottom: 20px;
+    left: 20px;
+    margin: 0;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
   }
-}
-.singer-name {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  margin: 0;
-  color: #fff;
-  font-size: 20px;
-  font-weight: 600;
-}
-.bg-image {
-  height: 400px;
-}
-.song-list-wrapper {
-  position: relative;
-  padding-bottom: 233px;
-}
+  .bg-image {
+    height: 400px;
+  }
+  .song-list-wrapper {
+    position: relative;
+    padding-bottom: 233px;
+  }
 </style>

@@ -6,7 +6,7 @@
       <router-view></router-view>
     </transition>
   </div>
-  
+
 </template>
 
 <style scoped lang="less">
@@ -62,6 +62,7 @@ import { ERR_OK } from "utils/config";
 import Singer from "utils/singer";
 import Loading from "base/loading/Loading";
 import Listview from "base/listview/Listview";
+import { mapMutations } from 'vuex';
 
 const HOT_NAME = "热门";
 const HOT_SINGER_LEN = 10;
@@ -86,7 +87,12 @@ export default {
   },
   mounted() {},
   methods: {
+    ...mapMutations({
+      set_singer: 'SET_SINGER'
+    }),
     selectItem(item) {
+      this.set_singer(item);
+      console.log(item.id)
       this.$router.push({
         path: `/Singer/${item.id}`
       })
