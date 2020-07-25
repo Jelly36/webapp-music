@@ -10,21 +10,22 @@ export default new Router({
       redirect: 'Recommend'
     },
     {
-      name: 'Recommend',
+      name: 'Recommend', //推荐页
       path: '/Recommend',
       component: () => import('components/recommend/Recommend')
     },
     {
-      name: 'Rank',
+      name: 'Rank', //排行榜
       path: '/Rank',
       component: () => import('components/rank/Rank')
     },
     {
+      name: 'Singer', //歌手列表页
       path: '/Singer',
-      component: () => import('components/singer/Singer'),
+      component: () => import('components/singer/Singer')
     },
     {
-      path:"/Singer/:id",
+      path:'/Singer/:id', //歌手详情页
       component: () => import('components/singer-detail/SingerDetail')
     },
     {
