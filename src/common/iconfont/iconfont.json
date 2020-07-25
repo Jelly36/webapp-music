@@ -6,11 +6,18 @@
   "description": "",
   "glyphs": [
     {
-      "icon_id": "579810",
+      "icon_id": "2076191",
       "name": "分享",
       "font_class": "fenxiang",
-      "unicode": "e623",
-      "unicode_decimal": 58915
+      "unicode": "e86e",
+      "unicode_decimal": 59502
+    },
+    {
+      "icon_id": "15838467",
+      "name": "elipsis",
+      "font_class": "elipsis",
+      "unicode": "e66e",
+      "unicode_decimal": 58990
     },
     {
       "icon_id": "7335624",
